@@ -88,4 +88,5 @@ if __name__ == "__main__":
     tampil_graph()
 
     print("\nHasil Dijkstra tanpa heap:")
+    
     shortest_path_dijkstra(0, 3)
