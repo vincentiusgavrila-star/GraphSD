@@ -4,28 +4,65 @@ const int MAX = 5;
 
 int jumlahVertex = 0;
 int edge[MAX][MAX];
-void tambahVertex(){
+void tambahVertex()
+{
     if (jumlahVertex < MAX)
     {
         jumlahVertex++;
         cout << "Vertex berhasil ditambahkan\n";
-    }else{
+    }
+    else
+    {
         cout << "Vertex sudah penuh\n";
     }
 }
 
-void tambahEdge(int a, int b){
+void tambahEdge(int a, int b)
+{
     if (a < jumlahVertex && b < jumlahVertex)
     {
         edge[a][b] = 1;
         // edge[b][a] = 0;
         cout << "Edge " << a << " ke " << b << " sudah ditambahkan\n";
-    }else{
+    }
+    else
+    {
         cout << "Vertex tidak valid!";
     }
 }
 
-void tampilGraph(){
+void hapusVertex(int v)
+{
+    if (v < jumlahVertex)
+    {
+        for (int i = 0; i < jumlahVertex; i++)
+        {
+            edge[i][v] = 0;
+            // edge[v][i] = 0;
+        }
+        cout << "Vertex " << v << " dihapus (semua edge terkait dihapus).\n";
+    }
+    else
+    {
+        cout << "Vertex tidak valid!\n";
+    }
+}
+
+void hapusEdge(int u, int v)
+{
+    if (u < jumlahVertex && v < jumlahVertex)
+    {
+        edge[u][v] = 0;
+        // edge[v][u] = 0;
+        cout << "Edge antara " << u << " dan " << v << " dihapus.\n";
+    }
+    else
+    {
+        cout << "Vertex tidak valid!\n";
+    }
+}
+void tampilGraph()
+{
     for (int i = 0; i < jumlahVertex; i++)
     {
         for (int j = 0; j < jumlahVertex; j++)
@@ -63,28 +100,53 @@ int dequeue() {
     }
 }
 
-//cari jalur pakai BFS
-void shortestPathBFS(int start, int goal) {
-    bool visited[MAX] = {false}; // bagian ini ngeset semua vertex sebagai belum dikunjungi {false, false, false, false, false}
-    int dist[MAX]; // inisialisasi array untuk menyimpan jarak dari vertex awal
-    int prev[MAX]; // inisialisasi array untuk menyimpan jalur
+bool visited[MAX];
+void cariJalur(int start, int target)
+{
+    if (start == target)
+    {
+        cout << target << " ";
+        return;
+    }
+    visited[start] = true;
+    cout << start << " -> ";
 
-    for (int i = 0; i < MAX; i++) {
+    for (int i = 0; i < jumlahVertex; i++)
+    {
+        if (edge[start][i] == 1 && !visited[i])
+        {
+            cariJalur(i, target);
+            return;
+        }
+    }
+}
+
+// cari jalur pakai BFS
+void shortestPathBFS(int start, int goal)
+{                
+    bool visited[MAX] = {false}; // bagian ini ngeset semua vertex sebagai belum dikunjungi {false, false, false, false, false}
+    int dist[MAX];               // inisialisasi array untuk menyimpan jarak dari vertex awal
+    int prev[MAX];               // inisialisasi array untuk menyimpan jalur
+
+    for (int i = 0; i < MAX; i++)
+    {
         dist[i] = -1; // ngeset jarak semua vertex ke -1 (belum terjangkau)
         prev[i] = -1; // ngeset jalur semua vertex ke -1 (belum ada jalur)
     }
 
     enqueue(start); // masukin vertex awal ke antrian, contohnya start = 0 berarti antrian sekarang ada [0]
     visited[start] = true; // ubah status vertex awal jadi sudah dikunjungi
-    dist[start] = 0; // karena ini vertex awal, jaraknya ke dirinya sendiri adalah 0
+    dist[start] = 0;       // karena ini vertex awal, jaraknya ke dirinya sendiri adalah 0
 
     while (!isEmpty()) { // ini maksudnya perulangan selama antrian tidak kosong
         int curr = q[front]; // ambil elemen paling depan dari antrian, tadikan dalam antrean ada [0], berarti curr = 0
         dequeue(); // hapus elemen paling depan dari antrian, berarti antrian sekarang jadi kosong [] tapi nilai 0 dah ada di variabel curr
 
-        for (int i = 0; i < jumlahVertex; i++) {
-            if (edge[curr][i] == 1 && !visited[i]) { // cek semua vertex yang terhubung dengan curr dan belum dikunjungi
-                visited[i] = true; // ngubah status vertex i jadi sudah dikunjungi
+        for (int i = 0; i < jumlahVertex; i++)
+        {
+            if (edge[curr][i] == 1 && !visited[i])
+            {                             // cek semua vertex yang terhubung dengan curr dan belum dikunjungi
+                visited[i] = true;        // ngubah status vertex i jadi sudah dikunjungi
                 dist[i] = dist[curr] + 1; // ngupdate jarak vertex i, misal dist[1] = dist[0] + 1 = 0 + 1 = 1
                 prev[i] = curr; // nyimpen jalur, misal prev[1] = 0 artinya buat ke 1 harus dari 0
                 enqueue(i); // masukin vertex i ke antrian, misal antrian sekarang [] jadi [1]
@@ -94,20 +156,24 @@ void shortestPathBFS(int start, int goal) {
     }
 
     // tampilkan hasil
-    if (dist[goal] == -1) { // kalo jarak ke goal masih -1 berarti ga ada jalur
+    if (dist[goal] == -1)
+    { // kalo jarak ke goal masih -1 berarti ga ada jalur
         cout << "Tidak ada jalur dari " << start << " ke " << goal << endl;
-    } else {
+    }
+    else
+    {
         cout << "Jarak terpendek: " << dist[goal] << endl; // misal goal = 3, berarti jarak terpendek dari start ke goal, disini dist[3] = dist[2] + 1 = 1 + 1 = 2
         cout << "Jalur: ";
         int path[MAX], count = 0;
         for (int at = goal; at != -1; at = prev[at]) // ini buat ngelacak jalur dari goal ke start, misal goal = 3, prev[3] = 2, prev[2] = 0, prev[1] = 0, prev[0] = -1
-            path[count++] = at; // simpen jalur di array path, sekarang path = [3, 2, 0], count = 3
-        for (int i = count - 1; i >= 0; i--) // ini buat nampilin jalur dari start ke goal, jadi dibalikin dari path tadi
-            cout << path[i] << (i ? " -> " : "\n"); // misal path[2] = 0, path[1] = 2, path[0] = 3, jadi outputnya 0 -> 2 -> 3
+            path[count++] = at;                      // simpen jalur di array path, sekarang path = [3, 2, 0], count = 3
+        for (int i = count - 1; i >= 0; i--)         // ini buat nampilin jalur dari start ke goal, jadi dibalikin dari path tadi
+            cout << path[i] << (i ? " -> " : "\n");  // misal path[2] = 0, path[1] = 2, path[0] = 3, jadi outputnya 0 -> 2 -> 3
     }
 }
 
-int main(){
+int main()
+{
     tambahVertex();
     tambahVertex();
     tambahVertex();
@@ -119,6 +185,7 @@ int main(){
     tambahEdge(2, 1);
     tambahEdge(2, 2);
     tambahEdge(2, 3);
+    cariJalur(1, 3);
     tampilGraph();
     shortestPathBFS(0, 3);
 }
@@ -135,9 +202,9 @@ int main(){
 | `size()`  | Mengembalikan jumlah elemen di antrian             |
 
 Penjelasan : BFS
-BFS (Breadth-First Search) adalah algoritma pencarian yang menjelajahi graf atau pohon secara melintang, yaitu dengan 
-mengunjungi semua tetangga dari suatu node sebelum melanjutkan ke level berikutnya. 
-Algoritma ini menggunakan struktur data antrian (queue) untuk menyimpan node-node yang akan dikunjungi selanjutnya. 
+BFS (Breadth-First Search) adalah algoritma pencarian yang menjelajahi graf atau pohon secara melintang, yaitu dengan
+mengunjungi semua tetangga dari suatu node sebelum melanjutkan ke level berikutnya.
+Algoritma ini menggunakan struktur data antrian (queue) untuk menyimpan node-node yang akan dikunjungi selanjutnya.
 BFS sering digunakan untuk menemukan jalur terpendek dalam graf tak berbobot.
 
 tabel curr = 0
