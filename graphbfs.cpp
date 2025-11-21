@@ -76,25 +76,34 @@ void tampilGraph()
 int q[MAX];
 int front = 0, rear = -1;
 
-bool isEmpty() {
+bool isEmpty()
+{
     return front > rear;
 }
 
-void enqueue(int val) {
-    if (rear < MAX - 1) {
+void enqueue(int val)
+{
+    if (rear < MAX - 1)
+    {
         rear++;
         q[rear] = val;
-    } else {
+    }
+    else
+    {
         cout << "Antrian penuh!\n";
     }
 }
 
-int dequeue() {
-    if (!isEmpty()) {
+int dequeue()
+{
+    if (!isEmpty())
+    {
         int val = q[front];
         front++;
         return val;
-    } else {
+    }
+    else
+    {
         cout << "Antrian kosong!\n";
         return -1;
     }
@@ -123,7 +132,7 @@ void cariJalur(int start, int target)
 
 // cari jalur pakai BFS
 void shortestPathBFS(int start, int goal)
-{                
+{
     bool visited[MAX] = {false}; // bagian ini ngeset semua vertex sebagai belum dikunjungi {false, false, false, false, false}
     int dist[MAX];               // inisialisasi array untuk menyimpan jarak dari vertex awal
     int prev[MAX];               // inisialisasi array untuk menyimpan jalur
@@ -134,13 +143,14 @@ void shortestPathBFS(int start, int goal)
         prev[i] = -1; // ngeset jalur semua vertex ke -1 (belum ada jalur)
     }
 
-    enqueue(start); // masukin vertex awal ke antrian, contohnya start = 0 berarti antrian sekarang ada [0]
+    enqueue(start);        // masukin vertex awal ke antrian, contohnya start = 0 berarti antrian sekarang ada [0]
     visited[start] = true; // ubah status vertex awal jadi sudah dikunjungi
     dist[start] = 0;       // karena ini vertex awal, jaraknya ke dirinya sendiri adalah 0
 
-    while (!isEmpty()) { // ini maksudnya perulangan selama antrian tidak kosong
+    while (!isEmpty())
+    {                        // ini maksudnya perulangan selama antrian tidak kosong
         int curr = q[front]; // ambil elemen paling depan dari antrian, tadikan dalam antrean ada [0], berarti curr = 0
-        dequeue(); // hapus elemen paling depan dari antrian, berarti antrian sekarang jadi kosong [] tapi nilai 0 dah ada di variabel curr
+        dequeue();           // hapus elemen paling depan dari antrian, berarti antrian sekarang jadi kosong [] tapi nilai 0 dah ada di variabel curr
 
         for (int i = 0; i < jumlahVertex; i++)
         {
@@ -148,8 +158,8 @@ void shortestPathBFS(int start, int goal)
             {                             // cek semua vertex yang terhubung dengan curr dan belum dikunjungi
                 visited[i] = true;        // ngubah status vertex i jadi sudah dikunjungi
                 dist[i] = dist[curr] + 1; // ngupdate jarak vertex i, misal dist[1] = dist[0] + 1 = 0 + 1 = 1
-                prev[i] = curr; // nyimpen jalur, misal prev[1] = 0 artinya buat ke 1 harus dari 0
-                enqueue(i); // masukin vertex i ke antrian, misal antrian sekarang [] jadi [1]
+                prev[i] = curr;           // nyimpen jalur, misal prev[1] = 0 artinya buat ke 1 harus dari 0
+                enqueue(i);               // masukin vertex i ke antrian, misal antrian sekarang [] jadi [1]
                 // lebih lengkapnya liat dibawah
             }
         }
@@ -185,7 +195,8 @@ int main()
     tambahEdge(2, 1);
     tambahEdge(2, 2);
     tambahEdge(2, 3);
-    cariJalur(1, 3);
+    cariJalur(0, 3);
+    cout << endl;
     tampilGraph();
     shortestPathBFS(0, 3);
 }

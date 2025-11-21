@@ -26,7 +26,7 @@ def tampil_graph():
 # ==============================
 # Dijkstra TANPA PRIORITY QUEUE
 # ==============================
-def shortest_path_dijkstra(start, goal):
+def shortest_path_dijkstra(start, goal): 
     dist = [float('inf')] * jumlah_vertex
     prev = [-1] * jumlah_vertex
     visited = [False] * jumlah_vertex
@@ -83,6 +83,7 @@ if __name__ == "__main__":
     tambah_edge(2, 1, 2)
     tambah_edge(1, 3, 1)
     tambah_edge(2, 3, 5)
+    tambah_edge(1, 0, 1)
 
     print("\nMatriks Ketetanggaan (Adjacency Matrix):")
     tampil_graph()
